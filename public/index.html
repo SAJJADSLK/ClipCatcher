@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="SnapLoad — Free video downloader. Download HD videos from YouTube, TikTok, Instagram, Twitter, Facebook, Twitch and 100+ sites. No watermark. No sign-up.">
+<meta name="keywords" content="video downloader,youtube downloader,tiktok downloader,instagram downloader,twitter video downloader,free video download,no watermark">
+<meta property="og:title" content="SnapLoad — Free Video Downloader">
+<meta property="og:description" content="Download videos from YouTube, TikTok, Instagram, Twitter and 100+ platforms. Free, fast, no watermark.">
+<meta property="og:type" content="website">
+<title>SnapLoad — Free Video Downloader | YouTube, TikTok, Instagram & More</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #0d0d0f;
+  --bg2:       #141417;
+  --surface:   #1a1a1f;
+  --surface2:  #222228;
+  --border:    rgba(255,255,255,0.08);
+  --border2:   rgba(255,255,255,0.14);
+  --text:      #f0f0f2;
+  --text2:     #a0a0b0;
+  --muted:     #606070;
+  --accent:    #7c6cf5;
+  --accent2:   #9d91f8;
+  --accent-bg: rgba(124,108,245,0.12);
+  --accent-glow: rgba(124,108,245,0.25);
+  --green:     #22c55e;
+  --green-bg:  rgba(34,197,94,0.1);
+  --red:       #f87171;
+  --red-bg:    rgba(248,113,113,0.1);
+  --r:         12px;
+  --r-lg:      18px;
+  --shadow:    0 4px 24px rgba(0,0,0,0.4);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+a { color: var(--accent2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── HEADER ──────────────────────────────────────── */
+header {
+  background: rgba(13,13,15,0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 100;
+}
+.header-inner {
+  max-width: 1100px; margin: 0 auto;
+  padding: 0 20px; height: 58px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo {
+  font-size: 20px; font-weight: 800; color: var(--text);
+  text-decoration: none; display: flex; align-items: center; gap: 8px;
+  letter-spacing: -0.5px;
+}
+.logo-icon {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--accent), #b49bff);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+nav { display: flex; align-items: center; gap: 24px; }
+nav a { color: var(--text2); font-size: 13.5px; font-weight: 500; transition: color .2s; }
+nav a:hover { color: var(--text); text-decoration: none; }
+
+/* ── HERO ─────────────────────────────────────────── */
+.hero {
+  padding: 80px 20px 64px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
+  width: 700px; height: 400px;
+  background: radial-gradient(ellipse, rgba(124,108,245,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--accent-bg); border: 1px solid rgba(124,108,245,0.3);
+  border-radius: 100px; padding: 5px 14px;
+  font-size: 12.5px; font-weight: 500; color: var(--accent2);
+  margin-bottom: 24px;
+}
+.hero-badge span { width: 7px; height: 7px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.6; transform:scale(0.85); } }
+
+h1 {
+  font-size: clamp(32px, 6vw, 56px);
+  font-weight: 800; letter-spacing: -2px;
+  line-height: 1.1; margin-bottom: 16px;
+  background: linear-gradient(135deg, #f0f0f2 30%, var(--accent2) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub {
+  font-size: 17px; color: var(--text2); max-width: 520px;
+  margin: 0 auto 40px; font-weight: 400;
+}
+
+/* ── DOWNLOAD CARD ────────────────────────────────── */
+.dl-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-lg);
+  max-width: 660px; margin: 0 auto;
+  padding: 28px; box-shadow: var(--shadow), 0 0 0 1px rgba(124,108,245,0.06);
+}
+
+.url-row {
+  display: flex; gap: 10px; margin-bottom: 16px;
+}
+.url-input-wrap {
+  flex: 1; display: flex; align-items: center;
+  background: var(--surface2); border: 1.5px solid var(--border2);
+  border-radius: var(--r); overflow: hidden;
+  transition: border-color .2s, box-shadow .2s;
+}
+.url-input-wrap:focus-within {
+  border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.url-icon {
+  padding: 0 12px; color: var(--muted); font-size: 16px;
+  flex-shrink: 0; user-select: none;
+}
+#urlInput {
+  flex: 1; padding: 13px 4px 13px 0;
+  background: none; border: none; outline: none;
+  color: var(--text); font-size: 14.5px; font-family: inherit;
+}
+#urlInput::placeholder { color: var(--muted); }
+
+.btn-paste {
+  padding: 13px 16px; background: none; border: none;
+  color: var(--accent2); font-size: 13px; font-weight: 600;
+  cursor: pointer; white-space: nowrap; transition: color .2s;
+  border-left: 1px solid var(--border);
+}
+.btn-paste:hover { color: #fff; }
+
+.btn-go {
+  padding: 13px 22px;
+  background: linear-gradient(135deg, var(--accent), #6a5ce0);
+  color: #fff; border: none; border-radius: var(--r);
+  font-size: 15px; font-weight: 700; cursor: pointer;
+  white-space: nowrap; transition: opacity .2s, transform .15s;
+  box-shadow: 0 4px 16px var(--accent-glow);
+}
+.btn-go:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-go:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+/* ── OPTIONS ROW ─────────────────────────────────── */
+.opts-label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }
+.opts-section { margin-bottom: 14px; }
+.opts-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.opt-chip {
+  padding: 6px 14px;
+  background: var(--surface2); border: 1.5px solid var(--border2);
+  border-radius: 100px; font-size: 13px; font-weight: 500;
+  color: var(--text2); cursor: pointer; transition: all .15s;
+}
+.opt-chip:hover { border-color: var(--accent); color: var(--accent2); }
+.opt-chip.active {
+  background: var(--accent-bg); border-color: var(--accent);
+  color: var(--accent2); font-weight: 600;
+}
+
+.opts-divider { width: 1px; background: var(--border); margin: 0 4px; }
+
+/* ── LOADER ──────────────────────────────────────── */
+#loaderWrap {
+  display: none; align-items: center; gap: 10px;
+  padding: 14px; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: var(--r);
+  margin-top: 16px; font-size: 13.5px; color: var(--text2);
+}
+#loaderWrap.show { display: flex; }
+.spinner {
+  width: 18px; height: 18px; border: 2px solid var(--border2);
+  border-top-color: var(--accent); border-radius: 50%;
+  animation: spin .7s linear infinite; flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── ERROR BOX ───────────────────────────────────── */
+#errorBox {
+  display: none; margin-top: 14px; padding: 12px 16px;
+  background: var(--red-bg); border: 1px solid rgba(248,113,113,0.25);
+  border-radius: var(--r); font-size: 13.5px; color: var(--red);
+}
+#errorBox.show { display: block; }
+
+/* ── RESULT ──────────────────────────────────────── */
+#resultWrap {
+  display: none; margin-top: 16px;
+  border: 1.5px solid rgba(34,197,94,0.25);
+  border-radius: var(--r); overflow: hidden;
+  background: var(--green-bg);
+  animation: slideIn .3s ease;
+}
+#resultWrap.show { display: block; }
+@keyframes slideIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+.result-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.res-platform-icon {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: var(--surface2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.res-info { flex: 1; min-width: 0; }
+.res-title { font-size: 14px; font-weight: 600; color: var(--text); }
+.res-source { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.res-check { color: var(--green); font-size: 20px; }
+
+#resContent { padding: 14px 16px; }
+
+.single-dl { display: flex; flex-direction: column; gap: 12px; }
+.single-dl-info {
+  font-size: 13px; color: var(--green); font-weight: 500;
+  display: flex; align-items: center; gap: 6px;
+}
+.single-dl-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.single-dl-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 22px;
+  background: linear-gradient(135deg, var(--green), #16a34a);
+  color: #fff; font-size: 14px; font-weight: 700;
+  border-radius: var(--r); text-decoration: none;
+  transition: opacity .2s, transform .15s;
+  box-shadow: 0 4px 12px rgba(34,197,94,0.3);
+}
+.single-dl-btn:hover { opacity: 0.88; transform: translateY(-1px); text-decoration: none; }
+.single-dl-btn-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 18px;
+  background: var(--surface2); border: 1.5px solid var(--border2);
+  color: var(--text2); font-size: 14px; font-weight: 500;
+  border-radius: var(--r); text-decoration: none;
+  transition: all .15s;
+}
+.single-dl-btn-secondary:hover { border-color: var(--accent); color: var(--accent2); text-decoration: none; }
+
+.picker-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px;
+}
+.picker-item {
+  border: 1px solid var(--border2); border-radius: 10px; overflow: hidden;
+  background: var(--surface2); display: flex; flex-direction: column;
+}
+.picker-item img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+.picker-item a {
+  display: block; padding: 8px 10px; font-size: 12px; font-weight: 600;
+  background: var(--accent); color: #fff; text-align: center; text-decoration: none;
+}
+.picker-item a:hover { opacity: 0.88; }
+
+/* ── PLATFORMS ────────────────────────────────────── */
+.platforms-section {
+  max-width: 1100px; margin: 60px auto 0; padding: 0 20px;
+}
+.section-label {
+  text-align: center; font-size: 12px; font-weight: 600;
+  color: var(--muted); text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+.platforms-scroll {
+  display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+}
+.plat-badge {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 100px; padding: 7px 16px;
+  font-size: 13.5px; font-weight: 500; color: var(--text2);
+  transition: all .2s; cursor: default;
+}
+.plat-badge:hover { border-color: var(--accent); color: var(--text); }
+.plat-badge .p-icon { font-size: 16px; }
+.plat-badge.more { color: var(--accent2); border-color: rgba(124,108,245,0.3); }
+
+/* ── HOW IT WORKS ─────────────────────────────────── */
+.how-section {
+  max-width: 1100px; margin: 80px auto 0; padding: 0 20px;
+}
+.section-title {
+  font-size: 30px; font-weight: 800; letter-spacing: -1px;
+  text-align: center; margin-bottom: 10px;
+}
+.section-sub {
+  font-size: 15px; color: var(--text2); text-align: center;
+  max-width: 480px; margin: 0 auto 40px;
+}
+.steps-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;
+}
+.step-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 24px;
+}
+.step-num {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--accent-bg); border: 1px solid rgba(124,108,245,0.3);
+  color: var(--accent2); font-size: 16px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 14px;
+}
+.step-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.step-desc { font-size: 13.5px; color: var(--text2); line-height: 1.55; }
+
+/* ── FEATURES ─────────────────────────────────────── */
+.features-section {
+  max-width: 1100px; margin: 80px auto 0; padding: 0 20px;
+}
+.features-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;
+}
+.feat-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 22px 24px;
+  transition: border-color .2s;
+}
+.feat-card:hover { border-color: var(--border2); }
+.feat-icon { font-size: 26px; margin-bottom: 12px; }
+.feat-title { font-size: 14.5px; font-weight: 700; margin-bottom: 6px; }
+.feat-desc { font-size: 13px; color: var(--text2); line-height: 1.55; }
+
+/* ── FAQ ──────────────────────────────────────────── */
+.faq-section {
+  max-width: 760px; margin: 80px auto 0; padding: 0 20px;
+}
+.faq-list { display: flex; flex-direction: column; gap: 8px; }
+.faq-item {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); overflow: hidden;
+}
+.faq-q {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 16px 20px;
+  background: none; border: none; cursor: pointer;
+  font-size: 14.5px; font-weight: 600; color: var(--text);
+  font-family: inherit; text-align: left; transition: color .2s;
+}
+.faq-q:hover { color: var(--accent2); }
+.faq-chevron { font-size: 18px; color: var(--muted); transition: transform .25s; flex-shrink: 0; }
+.faq-item.open .faq-chevron { transform: rotate(180deg); }
+.faq-a {
+  display: none; padding: 0 20px 16px;
+  font-size: 14px; color: var(--text2); line-height: 1.65;
+  border-top: 1px solid var(--border);
+}
+.faq-item.open .faq-a { display: block; padding-top: 14px; }
+
+/* ── FOOTER ───────────────────────────────────────── */
+footer {
+  border-top: 1px solid var(--border); margin-top: 80px; padding: 36px 20px;
+  text-align: center;
+}
+.footer-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 24px; margin-bottom: 16px; }
+.footer-links a { font-size: 13.5px; color: var(--text2); transition: color .2s; }
+.footer-links a:hover { color: var(--text); text-decoration: none; }
+.footer-copy { font-size: 13px; color: var(--muted); }
+
+/* ── MOBILE ───────────────────────────────────────── */
+@media (max-width: 600px) {
+  .url-row { flex-direction: column; }
+  .btn-go { width: 100%; justify-content: center; padding: 14px; }
+  .hero { padding: 52px 16px 44px; }
+  h1 { letter-spacing: -1px; }
+  .dl-card { padding: 18px; }
+  .single-dl-actions { flex-direction: column; }
+  .single-dl-btn, .single-dl-btn-secondary { justify-content: center; }
+  nav { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────── -->
+<header>
+  <div class="header-inner">
+    <a href="/" class="logo">
+      <div class="logo-icon">⬇</div>
+      SnapLoad
+    </a>
+    <nav>
+      <a href="#how">How it works</a>
+      <a href="#faq">FAQ</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ── HERO ───────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-badge">
+    <span></span> Live & Working · 100+ Platforms
+  </div>
+  <h1>Download Any Video,<br>Anywhere, Free</h1>
+  <p class="hero-sub">Paste a link from YouTube, TikTok, Instagram, Twitter and 100+ more. No watermark. No account needed.</p>
+
+  <!-- ── DOWNLOAD CARD ─────────────────────────────── -->
+  <div class="dl-card">
+    <div class="url-row">
+      <div class="url-input-wrap" id="urlWrap">
+        <div class="url-icon">🔗</div>
+        <input
+          type="url" id="urlInput"
+          placeholder="Paste a video URL here…"
+          autocomplete="off" autocorrect="off" spellcheck="false"
+          onkeydown="if(event.key==='Enter') doDownload()"
+        >
+        <button class="btn-paste" onclick="doPaste()" title="Paste from clipboard">Paste</button>
+      </div>
+      <button class="btn-go" id="goBtn" onclick="doDownload()">⬇&nbsp; Download</button>
+    </div>
+
+    <!-- Mode -->
+    <div class="opts-section">
+      <div class="opts-label">Download as</div>
+      <div class="opts-chips">
+        <button class="opt-chip active" id="mode-auto"  onclick="setMode(this,'auto')">🎬 Video + Audio</button>
+        <button class="opt-chip"        id="mode-audio" onclick="setMode(this,'audio')">🎵 Audio only (MP3)</button>
+        <button class="opt-chip"        id="mode-mute"  onclick="setMode(this,'mute')">🔇 Video only (mute)</button>
+      </div>
+    </div>
+
+    <!-- Quality -->
+    <div class="opts-section" id="qualityRow">
+      <div class="opts-label">Quality</div>
+      <div class="opts-chips">
+        <button class="opt-chip" id="q-2160" onclick="setQuality(this,'2160')">4K</button>
+        <button class="opt-chip active" id="q-1080" onclick="setQuality(this,'1080')">1080p</button>
+        <button class="opt-chip" id="q-720"  onclick="setQuality(this,'720')">720p</button>
+        <button class="opt-chip" id="q-480"  onclick="setQuality(this,'480')">480p</button>
+        <button class="opt-chip" id="q-max"  onclick="setQuality(this,'max')">Best</button>
+      </div>
+    </div>
+
+    <!-- Loader -->
+    <div id="loaderWrap">
+      <div class="spinner"></div>
+      <span id="loaderTxt">Processing…</span>
+    </div>
+
+    <!-- Error -->
+    <div id="errorBox"></div>
+
+    <!-- Result -->
+    <div id="resultWrap">
+      <div class="result-header">
+        <div class="res-platform-icon" id="resPlatformIcon">🎬</div>
+        <div class="res-info">
+          <div class="res-title" id="resTitle">Your file is ready!</div>
+          <div class="res-source" id="resSource"></div>
+        </div>
+        <div class="res-check">✓</div>
+      </div>
+      <div id="resContent"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SUPPORTED PLATFORMS ─────────────────────────── -->
+<div class="platforms-section">
+  <div class="section-label">Supported platforms</div>
+  <div class="platforms-scroll">
+    <div class="plat-badge"><span class="p-icon">▶️</span> YouTube</div>
+    <div class="plat-badge"><span class="p-icon">🎵</span> TikTok</div>
+    <div class="plat-badge"><span class="p-icon">📸</span> Instagram</div>
+    <div class="plat-badge"><span class="p-icon">🐦</span> Twitter / X</div>
+    <div class="plat-badge"><span class="p-icon">🎮</span> Twitch</div>
+    <div class="plat-badge"><span class="p-icon">👥</span> Facebook</div>
+    <div class="plat-badge"><span class="p-icon">🎥</span> Vimeo</div>
+    <div class="plat-badge"><span class="p-icon">📌</span> Pinterest</div>
+    <div class="plat-badge"><span class="p-icon">🎵</span> SoundCloud</div>
+    <div class="plat-badge"><span class="p-icon">🌀</span> Dailymotion</div>
+    <div class="plat-badge"><span class="p-icon">📹</span> Bilibili</div>
+    <div class="plat-badge"><span class="p-icon">🎭</span> Tumblr</div>
+    <div class="plat-badge more"><span class="p-icon">✦</span> 100+ more</div>
+  </div>
+</div>
+
+<!-- ── HOW IT WORKS ────────────────────────────────── -->
+<section class="how-section" id="how">
+  <div class="section-title">How it works</div>
+  <p class="section-sub">Three steps. Ten seconds. Your video, offline.</p>
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <div class="step-title">Copy the link</div>
+      <div class="step-desc">Go to any supported platform, open the video and copy its URL from your browser or app.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <div class="step-title">Paste & choose</div>
+      <div class="step-desc">Paste the URL into SnapLoad. Pick your quality and whether you want video or audio only.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <div class="step-title">Download</div>
+      <div class="step-desc">Tap Download. Your file is processed instantly and saved directly to your device.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ────────────────────────────────────── -->
+<section class="features-section" id="features">
+  <div class="section-title" style="margin-bottom:10px">Why SnapLoad?</div>
+  <p class="section-sub">No fluff. Just fast, reliable downloads.</p>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon">⚡</div>
+      <div class="feat-title">Instant processing</div>
+      <div class="feat-desc">No queues. Videos are fetched and ready to download within seconds.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🚫</div>
+      <div class="feat-title">No watermark</div>
+      <div class="feat-desc">Download TikTok, Instagram and other videos clean — no branding added.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🎯</div>
+      <div class="feat-title">Up to 4K quality</div>
+      <div class="feat-desc">Download in the best available quality — up to 2160p where supported.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🔒</div>
+      <div class="feat-title">Private by design</div>
+      <div class="feat-desc">We never store your URLs or files. Everything is processed in real time and discarded.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">💳</div>
+      <div class="feat-title">100% free</div>
+      <div class="feat-desc">No account, no subscription, no hidden fees. Paste, download, done.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📱</div>
+      <div class="feat-title">Works everywhere</div>
+      <div class="feat-desc">Fully optimised for mobile, tablet and desktop — download on any device.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ─────────────────────────────────────────── -->
+<section class="faq-section" id="faq">
+  <div class="section-title">Frequently asked questions</div>
+  <p class="section-sub" style="margin-bottom:28px">Everything you need to know.</p>
+  <div class="faq-list">
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Is SnapLoad free?<span class="faq-chevron">⌄</span>
+      </button>
+      <div class="faq-a">Yes, SnapLoad is completely free. There are no premium plans, no account required, and no hidden charges. You can download as many videos as you need.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Is it legal to download videos?<span class="faq-chevron">⌄</span>
+      </button>
+      <div class="faq-a">Downloading videos for personal offline viewing is generally acceptable under fair use principles in many regions. You should not redistribute, sell, or re-upload downloaded content without the creator's permission. Always respect copyright laws and each platform's terms of service. SnapLoad is intended for personal use only.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        What formats and qualities are supported?<span class="faq-chevron">⌄</span>
+      </button>
+      <div class="faq-a">SnapLoad supports MP4 video (144p up to 4K/2160p), MP3/OGG/WAV/Opus audio extraction, and various platform-specific formats. Quality options depend on what the original video was uploaded in.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Why isn't my video downloading?<span class="faq-chevron">⌄</span>
+      </button>
+      <div class="faq-a">Make sure the video is publicly accessible — private, members-only, or age-restricted content may not be downloadable. Paste the full URL including "https://". If it still doesn't work, the platform may have recently updated its structure — try again in a few minutes.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Can I download TikTok videos without watermark?<span class="faq-chevron">⌄</span>
+      </button>
+      <div class="faq-a">Yes! SnapLoad retrieves the original, watermark-free version of TikTok videos directly from TikTok's servers, so you get a clean copy without any overlay.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Can I download Instagram Reels and carousels?<span class="faq-chevron">⌄</span>
+      </button>
+      <div class="faq-a">Yes — Instagram Reels, video posts, and carousels (multi-media posts) are all supported. For carousels, you'll see a picker letting you choose which photos or videos to download. Private account content cannot be downloaded as it requires authentication.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Does SnapLoad store my files or URLs?<span class="faq-chevron">⌄</span>
+      </button>
+      <div class="faq-a">No. SnapLoad does not log, store, or cache any URLs or downloaded content. Downloads are processed in real time and streamed directly from the source to your device.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Can I download YouTube videos in 4K?<span class="faq-chevron">⌄</span>
+      </button>
+      <div class="faq-a">Yes, YouTube supports up to 4K (2160p) downloads. Select "Best" or "4K" in the quality picker before downloading. Note that 4K files are large and may take a moment to process.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── FOOTER ──────────────────────────────────────── -->
+<footer>
+  <div class="footer-links">
+    <a href="/">Home</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Use</a>
+    <a href="dmca.html">DMCA</a>
+  </div>
+  <div class="footer-copy">© 2025 SnapLoad. Powered by <a href="https://cobalt.tools" target="_blank" rel="noopener">cobalt</a>. For personal use only.</div>
+</footer>
+
+<script>
+// ── STATE ─────────────────────────────────────────
+let currentMode    = 'auto';
+let currentQuality = '1080';
+
+// ── OPTIONS ───────────────────────────────────────
+function setMode(el, val) {
+  document.querySelectorAll('#mode-auto,#mode-audio,#mode-mute').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  currentMode = val;
+  // hide quality when audio-only
+  document.getElementById('qualityRow').style.display = val === 'audio' ? 'none' : '';
+}
+
+function setQuality(el, val) {
+  document.querySelectorAll('#q-2160,#q-1080,#q-720,#q-480,#q-max').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  currentQuality = val;
+}
+
+// ── PASTE ─────────────────────────────────────────
+async function doPaste() {
+  try {
+    const txt = await navigator.clipboard.readText();
+    if (txt) document.getElementById('urlInput').value = txt.trim();
+  } catch {
+    document.getElementById('urlInput').focus();
+  }
+}
+
+// ── PLATFORM DETECT ───────────────────────────────
+function detectPlatform(url) {
+  const u = url.toLowerCase();
+  if (u.includes('youtube.com') || u.includes('youtu.be'))    return { name:'YouTube',     icon:'▶️',  color:'#ff0000' };
+  if (u.includes('tiktok.com'))                                return { name:'TikTok',      icon:'🎵',  color:'#010101' };
+  if (u.includes('instagram.com'))                             return { name:'Instagram',   icon:'📸',  color:'#c13584' };
+  if (u.includes('twitter.com') || u.includes('x.com'))       return { name:'Twitter / X', icon:'🐦',  color:'#1da1f2' };
+  if (u.includes('twitch.tv'))                                 return { name:'Twitch',      icon:'🎮',  color:'#9147ff' };
+  if (u.includes('facebook.com') || u.includes('fb.watch'))   return { name:'Facebook',    icon:'👥',  color:'#1877f2' };
+  if (u.includes('vimeo.com'))                                 return { name:'Vimeo',       icon:'🎥',  color:'#1ab7ea' };
+  if (u.includes('pinterest.com'))                             return { name:'Pinterest',   icon:'📌',  color:'#e60023' };
+  if (u.includes('soundcloud.com'))                            return { name:'SoundCloud',  icon:'🎵',  color:'#ff5500' };
+  if (u.includes('dailymotion.com'))                           return { name:'Dailymotion', icon:'🌀',  color:'#0066dc' };
+  if (u.includes('bilibili.com'))                              return { name:'Bilibili',    icon:'📹',  color:'#00a1d6' };
+  if (u.includes('tumblr.com'))                                return { name:'Tumblr',      icon:'🎭',  color:'#35465c' };
+  return { name:'Video', icon:'🎬', color:'#7c6cf5' };
+}
+
+// ── DOWNLOAD ──────────────────────────────────────
+async function doDownload() {
+  const rawUrl = document.getElementById('urlInput').value.trim();
+  if (!rawUrl) { shakeInput(); return; }
+
+  let parsedUrl;
+  try { parsedUrl = new URL(rawUrl); }
+  catch { showError('Please enter a valid URL starting with https://'); return; }
+
+  const platform = detectPlatform(rawUrl);
+  setLoading(true, `Connecting to ${platform.name}…`);
+  hideResult(); hideError();
+
+  try {
+    const res = await fetch('/api/download', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        url:         parsedUrl.href,
+        quality:     currentQuality,
+        mode:        currentMode,
+        audioFormat: 'mp3',
+        videoCodec:  'h264',
+      }),
+    });
+
+    const data = await res.json();
+    setLoading(false);
+
+    if (!res.ok || data.error) {
+      showError(data.error || 'Could not process this URL. The video may be private or region-locked.');
+      return;
+    }
+
+    renderResult(platform, rawUrl, data);
+  } catch (err) {
+    setLoading(false);
+    showError('Network error — please check your connection and try again.');
+  }
+}
+
+// ── RENDER RESULT ─────────────────────────────────
+function renderResult(platform, sourceUrl, data) {
+  document.getElementById('resPlatformIcon').textContent = platform.icon;
+  document.getElementById('resTitle').textContent = 'Ready to download!';
+  try {
+    document.getElementById('resSource').textContent = platform.name + ' · ' + new URL(sourceUrl).hostname;
+  } catch { document.getElementById('resSource').textContent = platform.name; }
+
+  const content = document.getElementById('resContent');
+  content.innerHTML = '';
+
+  if (data.status === 'redirect' || data.status === 'tunnel') {
+    const ext = currentMode === 'audio' ? 'mp3' : 'mp4';
+    const qLabel = currentMode === 'audio' ? 'MP3 Audio' : `${currentQuality === 'max' ? 'Best' : currentQuality + 'p'} MP4`;
+    const filename = `snapload_${platform.name.toLowerCase().replace(/[^a-z]/g,'_')}_${Date.now()}.${ext}`;
+
+    content.innerHTML = `
+      <div class="single-dl">
+        <div class="single-dl-info">✓ &nbsp;${qLabel} · Ready</div>
+        <div class="single-dl-actions">
+          <a class="single-dl-btn" href="${escHtml(data.url)}" download="${escHtml(filename)}" target="_blank" rel="noopener">
+            ⬇&nbsp; Save ${ext.toUpperCase()}
+          </a>
+          <a class="single-dl-btn-secondary" href="${escHtml(data.url)}" target="_blank" rel="noopener">
+            ↗&nbsp; Open in browser
+          </a>
+        </div>
+      </div>`;
+
+  } else if (data.status === 'picker') {
+    let html = '<p style="font-size:13px;color:var(--text2);margin-bottom:12px;">Multiple items found — choose what to download:</p><div class="picker-grid">';
+    (data.picker || []).forEach((item, i) => {
+      if (item.type === 'photo') {
+        html += `<div class="picker-item"><img src="${escHtml(item.url)}" alt="Photo ${i+1}" loading="lazy"><a href="${escHtml(item.url)}" download="snapload_photo_${i+1}.jpg" target="_blank">⬇ Photo ${i+1}</a></div>`;
+      } else {
+        html += `<div class="picker-item" style="background:var(--surface2);min-height:100px;align-items:center;justify-content:center;display:flex;flex-direction:column;gap:8px;padding:16px"><span style="font-size:28px">🎬</span><a href="${escHtml(item.url)}" download="snapload_video_${i+1}.mp4" target="_blank" style="width:100%;display:block;padding:8px;font-size:12px;font-weight:700;background:var(--accent);color:#fff;text-align:center;border-radius:0 0 8px 8px;text-decoration:none">⬇ Video ${i+1}</a></div>`;
+      }
+    });
+    if (data.audio) {
+      html += `<div class="picker-item" style="background:var(--surface2);min-height:100px;align-items:center;justify-content:center;display:flex;flex-direction:column;gap:8px;padding:16px"><span style="font-size:28px">🎵</span><a href="${escHtml(data.audio)}" download="snapload_audio.mp3" target="_blank" style="width:100%;display:block;padding:8px;font-size:12px;font-weight:700;background:var(--green);color:#fff;text-align:center;border-radius:0 0 8px 8px;text-decoration:none">⬇ Audio</a></div>`;
+    }
+    html += '</div>';
+    content.innerHTML = html;
+
+  } else if (data.status === 'error') {
+    showError(data.error?.code ? friendlyError(data.error.code) : 'An error occurred. Please try again.');
+    return;
+  } else {
+    showError('Unexpected response from server. Please try again.');
+    return;
+  }
+
+  showResult();
+}
+
+// ── ERROR MESSAGES ─────────────────────────────────
+function friendlyError(code) {
+  const map = {
+    'error.api.unreachable':             'Could not reach the download service. Try again in a moment.',
+    'error.api.timed_out':               'The request timed out. Please try again.',
+    'error.api.rate_exceeded':           'Too many requests. Please wait a minute and try again.',
+    'error.link.invalid':                'This URL is not valid or not recognised.',
+    'error.link.unsupported':            'This platform or link type is not yet supported.',
+    'error.link.unavailable':            'This content is unavailable — it may have been deleted.',
+    'error.fetch.empty':                 'The video is unavailable or set to private.',
+    'error.fetch.short':                 'Could not fetch enough data. It may be region-locked.',
+    'error.fetch.fail':                  'Failed to retrieve the media. Try again.',
+    'error.youtube.login':               'This YouTube video requires sign-in (members-only).',
+    'error.youtube.age':                 'This YouTube video is age-restricted and cannot be downloaded.',
+    'error.youtube.unavailable':         'This YouTube video is unavailable in the server region.',
+    'error.youtube.decipher':            'Could not decode this YouTube video. Try again later.',
+    'error.content.too_long':            'This video is too long to download (maximum ~2 hours).',
+    'error.content.video.unavailable':   'The video stream is unavailable. Try a lower quality.',
+    'error.content.audio.unavailable':   'The audio stream is unavailable for this video.',
+    'error.tiktok.unavailable':          'This TikTok video has been removed or is unavailable.',
+    'error.instagram.fetch':             'Could not fetch this Instagram post. It may be private.',
+    'error.twitter.unavailable':         'This tweet is unavailable or has been removed.',
+  };
+  return map[code] || `Error (${code}). Please try a different link or try again later.`;
+}
+
+// ── UI HELPERS ─────────────────────────────────────
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function setLoading(show, txt = '') {
+  document.getElementById('loaderTxt').textContent = txt;
+  document.getElementById('loaderWrap').classList.toggle('show', show);
+  document.getElementById('goBtn').disabled = show;
+}
+function showResult()   { document.getElementById('resultWrap').classList.add('show'); }
+function hideResult()   { document.getElementById('resultWrap').classList.remove('show'); }
+function showError(msg) {
+  const e = document.getElementById('errorBox');
+  e.innerHTML = '⚠ ' + escHtml(msg);
+  e.classList.add('show');
+}
+function hideError()    { document.getElementById('errorBox').classList.remove('show'); }
+function shakeInput() {
+  const w = document.getElementById('urlWrap');
+  w.style.borderColor = '#f87171';
+  const times = [0,70,140,210,280,350];
+  times.forEach((t, i) => setTimeout(() => { w.style.transform = i%2 ? 'translateX(5px)' : 'translateX(-5px)'; }, t));
+  setTimeout(() => { w.style.transform = ''; w.style.borderColor = ''; }, 430);
+}
+function toggleFaq(btn) { btn.closest('.faq-item').classList.toggle('open'); }
+
+// Auto-paste on input focus if clipboard has a URL
+document.getElementById('urlInput').addEventListener('focus', async function() {
+  if (this.value) return;
+  try {
+    const txt = await navigator.clipboard.readText();
+    if (txt && /^https?:\/\//i.test(txt)) this.value = txt.trim();
+  } catch {}
+});
+
+// Clear error/result when user edits the input
+document.getElementById('urlInput').addEventListener('input', function() {
+  hideError();
+  hideResult();
+});
+</script>
+</body>
+</html>
