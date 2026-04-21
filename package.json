@@ -1,0 +1,9 @@
+{
+  "name": "snapload",
+  "version": "1.0.0",
+  "description": "Universal video downloader powered by cobalt",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "dev": "vercel dev"
+  }
+}
