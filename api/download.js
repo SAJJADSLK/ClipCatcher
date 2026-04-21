@@ -1,15 +1,16 @@
-// api/download.js — uses your own Railway cobalt instance
+// api/download.js — CommonJS (universally compatible with Vercel)
 
 const PRIMARY_INSTANCE = 'https://cobalt-api-production-fb11.up.railway.app/';
 
-// Optional fallbacks from env var or community list
-const EXTRA_INSTANCES = [
-  process.env.COBALT_API_URL,
+const FALLBACK_INSTANCES = [
   'https://cobalt.ari.lt/',
   'https://cobalt.plutos.one/',
-].filter(Boolean);
+];
 
-const ALL_INSTANCES = [PRIMARY_INSTANCE, ...EXTRA_INSTANCES.filter(u => u !== PRIMARY_INSTANCE)];
+const ALL_INSTANCES = [
+  process.env.COBALT_API_URL || PRIMARY_INSTANCE,
+  ...FALLBACK_INSTANCES,
+];
 
 async function fetchCobalt(instanceUrl, body) {
   const res = await fetch(instanceUrl, {
@@ -22,18 +23,24 @@ async function fetchCobalt(instanceUrl, body) {
     signal: AbortSignal.timeout(20000),
   });
 
-  if (res.status === 401 || res.status === 403) throw Object.assign(new Error('AUTH'),       { skip: true });
-  if (res.status === 429)                        throw Object.assign(new Error('RATELIMIT'),  { skip: true });
+  if (res.status === 401 || res.status === 403) {
+    throw Object.assign(new Error('AUTH'), { skip: true });
+  }
+  if (res.status === 429) {
+    throw Object.assign(new Error('RATELIMIT'), { skip: true });
+  }
 
-  const ct = res.headers.get('content-type') ?? '';
-  if (!ct.includes('application/json'))          throw Object.assign(new Error('NOT_JSON'),  { skip: true });
+  const ct = res.headers.get('content-type') || '';
+  if (!ct.includes('application/json')) {
+    throw Object.assign(new Error('NOT_JSON'), { skip: true });
+  }
 
   const data = await res.json();
-  if (!res.ok) throw new Error(data?.error?.code ?? `HTTP_${res.status}`);
+  if (!res.ok) throw new Error(data?.error?.code || `HTTP_${res.status}`);
   return data;
 }
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin',  '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -47,20 +54,23 @@ export default async function handler(req, res) {
     mode        = 'auto',
     audioFormat = 'mp3',
     videoCodec  = 'h264',
-  } = req.body ?? {};
+  } = req.body || {};
 
   if (!url || typeof url !== 'string') {
     return res.status(400).json({ error: 'A valid URL is required.' });
   }
 
   let parsedUrl;
-  try { parsedUrl = new URL(url.trim()); }
-  catch { return res.status(400).json({ error: 'Invalid URL — must start with https://.' }); }
+  try {
+    parsedUrl = new URL(url.trim());
+  } catch {
+    return res.status(400).json({ error: 'Invalid URL — must start with https://.' });
+  }
 
   const cobaltBody = {
     url:               parsedUrl.href,
     videoQuality:      quality,
-    audioFormat,
+    audioFormat:       audioFormat,
     filenameStyle:     'pretty',
     downloadMode:      mode,
     youtubeVideoCodec: videoCodec,
@@ -75,21 +85,24 @@ export default async function handler(req, res) {
       const data = await fetchCobalt(instance, cobaltBody);
 
       if (data.status === 'error') {
-        const code = data.error?.code ?? 'unknown';
+        const code = (data.error && data.error.code) || 'unknown';
         return res.status(422).json({ error: friendlyError(code), code });
       }
 
       return res.status(200).json(data);
 
     } catch (err) {
-      if (err.name === 'TimeoutError') lastErr = 'Request timed out. Please try again.';
-      else if (!err.skip) lastErr = friendlyError(err.message);
+      if (err.name === 'TimeoutError') {
+        lastErr = 'Request timed out. Please try again.';
+      } else if (!err.skip) {
+        lastErr = friendlyError(err.message);
+      }
       continue;
     }
   }
 
   return res.status(502).json({ error: lastErr });
-}
+};
 
 function friendlyError(code) {
   const map = {
@@ -110,9 +123,9 @@ function friendlyError(code) {
     'error.content.video.unavailable': 'The video stream is unavailable at this quality.',
     'error.content.audio.unavailable': 'The audio stream is unavailable for this video.',
     'error.tiktok.unavailable':        'This TikTok video has been removed or is unavailable.',
-    'error.instagram.fetch':           'Could not fetch this Instagram post — it may be private.',
+    'error.instagram.fetch':           'Could not fetch this post — it may be private.',
     'error.twitter.unavailable':       'This tweet is unavailable or has been removed.',
     'error.twitter.login':             'This Twitter/X content requires a login.',
   };
-  return map[code] ?? (code.startsWith('error.') ? `Service error: ${code}` : 'Something went wrong. Please try again.');
+  return map[code] || (code.startsWith('error.') ? 'Service error: ' + code : 'Something went wrong. Please try again.');
 }
